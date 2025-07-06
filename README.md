@@ -1,6 +1,6 @@
-# quickstart-mp
+# pokeapi-helidon-mp
 
-Sample Helidon MP project that includes multiple REST operations.
+Pokemon API basic application deployed on Helidon MP
 
 ## Build and run
 
@@ -15,35 +15,8 @@ java -jar target/quickstart-mp.jar
 
 Basic:
 ```
-curl -X GET http://localhost:8080/simple-greet
-Hello World!
+http://localhost:8080/
 ```
-
-
-JSON:
-```
-curl -X GET http://localhost:8080/greet
-{"message":"Hello World!"}
-
-curl -X GET http://localhost:8080/greet/Joe
-{"message":"Hello Joe!"}
-
-curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Hola"}' http://localhost:8080/greet/greeting
-
-curl -X GET http://localhost:8080/greet/Jose
-{"message":"Hola Jose!"}
-```
-
-
-
-## Try health
-
-```
-curl -s -X GET http://localhost:8080/health
-{"outcome":"UP",...
-
-```
-
 
 ## Building a Native Image
 
@@ -62,32 +35,18 @@ project generation phase.
 
 
 
-## Try metrics
-
-```
-# Prometheus Format
-curl -s -X GET http://localhost:8080/metrics
-# TYPE base:gc_g1_young_generation_count gauge
-. . .
-
-# JSON Format
-curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics
-{"base":...
-. . .
-```
-
-
-
 ## Building the Docker Image
 
 ```
-docker build -t quickstart-mp .
+podman build -t quickstart-mp .
+podman tag localhost/quickstart-mp:latest pokeapi:latest
+podman images
 ```
 
 ## Running the Docker Image
 
 ```
-docker run --rm -p 8080:8080 quickstart-mp:latest
+docker run --rm -p 8080:8080 pokeapi:latest
 ```
 
 Exercise the application as described above.
