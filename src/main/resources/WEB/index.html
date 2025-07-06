@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeAPI</title>
+</head>
+<body>
+    <h2>Enter the Pokemon name you wanna know about : </h2>
+    <br/>
+    <span class="input-group">
+        <label for="pokemon">Pokemon : </label>
+        <input type="text" id="pokemon" placeholder="Enter the Pokemon">
+    </span>
+    <button onclick="fetchPokeData()" style="margin-bottom: 10px;">Fetch Data</button>
+    <br/>
+    <h3>Abilities : </h3>
+    <div id="abilities"></div>
+    <br/>
+    <h3>Moves</h3>
+    <details style="margin-left: 20px;">
+        <summary>Move Set</summary>
+        <ul id="moves"></ul>
+    </details>
+    <br/>
+    <h3>Sprites : </h3>
+    <div id="sprites"></div>
+    <br/>
+    <h3>Types : </h3>
+    <div id="types"></div>
+    <script>
+        async function fetchPokeData() {
+            let pokemon = document.getElementById('pokemon').value;      
+            let result = await pokeFetch(pokemon);
+
+            let abilities = [];
+            for(let i=0; i<JSON.parse(result.pokeData).abilities.length; i++){
+                abilities.push(JSON.parse(result.pokeData).abilities[i].ability.name);
+            }
+            let abilitiesHtml = '<ul>';
+            for (let i = 0; i < abilities.length; i++) {
+                const ability = abilities[i];
+                abilitiesHtml += `<li>
+                                    ${ability}
+                                </li>`;
+            }
+            abilitiesHtml+=`</ul>`;
+            document.getElementById('abilities').innerHTML = abilitiesHtml;
+
+            let moves = [];
+            for(let i=0; i<JSON.parse(result.pokeData).moves.length; i++){
+                moves.push(JSON.parse(result.pokeData).moves[i].move.name);
+            }
+            let movesHTML = '';
+            for (let i = 0; i < moves.length; i++) {
+                const move = moves[i];
+                movesHTML += `<li>
+                                    ${move}
+                                </li>`;
+            }
+            document.getElementById('moves').innerHTML = movesHTML;
+
+            let sprites = JSON.parse(result.pokeData).sprites;
+            let filteredSprites = { ...sprites };
+            delete filteredSprites.other;
+            delete filteredSprites.versions;
+            let spritesArray = [];
+            Object.entries(filteredSprites).forEach(([key, value]) => {
+                spritesArray.push(`${key}:`, value);
+            });
+            let html = '';
+            for (let i = 0; i < spritesArray.length; i += 2) {
+                const label = spritesArray[i];
+                const url = spritesArray[i + 1];           
+                if (url) {
+                    html += `<div>
+                            <span>${label}</span>
+                            <img src="${url}">
+                            </div>`;
+                }
+            }
+            document.getElementById('sprites').innerHTML=html;
+
+            let types = [];
+            for(let i=0; i<JSON.parse(result.pokeData).types.length; i++){
+                types.push(JSON.parse(result.pokeData).types[i].type.name);
+            }
+            let typesHTML = '<ul>';
+            for (let i = 0; i < types.length; i++) {
+                const type = types[i];
+                typesHTML += `<li>
+                                    ${type}
+                                </li>`;
+            }
+            typesHTML+=`</ul>`;
+            document.getElementById('types').innerHTML=typesHTML;
+        };
+
+        async function pokeFetch(pokemon){
+            let res = await fetch('/pokemon/'+pokemon);
+            let data = await res.json();
+            return data;
+        };
+    </script>
+</body>
+<footer>
+    © Data being fetched from https://pokeapi.co/docs/v2 API. I do not own any of these data samples.
+</footer>
+</html>
